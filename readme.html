@@ -1,0 +1,100 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>Dillinger.md</title><style></style></head><body id="preview">
+<h1 class="code-line" data-line-start=0 data-line-end=1><a id="UVOT_SWIFT_data_analysis_automation_0"></a>UVOT SWIFT data analysis automation</h1>
+<hr>
+<h3 class="code-line" data-line-start=3 data-line-end=4><a id="Prequisites_3"></a>Prequisites</h3>
+<hr>
+<ul>
+<li class="has-line-data" data-line-start="5" data-line-end="6">download and install heasoft software</li>
+<li class="has-line-data" data-line-start="6" data-line-end="7">setup CALDB</li>
+<li class="has-line-data" data-line-start="7" data-line-end="8">download the necessary data to be anlysed</li>
+<li class="has-line-data" data-line-start="8" data-line-end="9">extract the downloaded archive in downloaded_data folder inside working directory</li>
+<li class="has-line-data" data-line-start="9" data-line-end="11">create a folder “analysis” in working directory</li>
+</ul>
+<p class="has-line-data" data-line-start="11" data-line-end="12">to sum it up, all you need is to have these in your working directory, rest of the directory structure will be created by the scripts</p>
+<ul>
+<li class="has-line-data" data-line-start="12" data-line-end="19">folders
+<ul>
+<li class="has-line-data" data-line-start="13" data-line-end="15">downloaded_data<br>
+(all the downloaded date extracted here)</li>
+<li class="has-line-data" data-line-start="15" data-line-end="19">analysis
+<ul>
+<li class="has-line-data" data-line-start="16" data-line-end="19">region_files<br>
+-common<br>
+(containing source and region files created taking one of the images named as src.reg and bg.reg)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="has-line-data" data-line-start="19" data-line-end="25">files
+<ul>
+<li class="has-line-data" data-line-start="20" data-line-end="21">obs_ids.py</li>
+<li class="has-line-data" data-line-start="21" data-line-end="22">uvotimsum_script.py</li>
+<li class="has-line-data" data-line-start="22" data-line-end="23">uvotsource_script.py</li>
+<li class="has-line-data" data-line-start="23" data-line-end="24">uvotmaghist_script.py</li>
+<li class="has-line-data" data-line-start="24" data-line-end="25"></li>
+</ul>
+</li>
+</ul>
+<p class="has-line-data" data-line-start="25" data-line-end="26"><strong>Good to go</strong></p>
+<h3 class="code-line" data-line-start=27 data-line-end=28><a id="DIRECTORY_STRUCTURE_27"></a>DIRECTORY STRUCTURE</h3>
+<hr>
+<pre><code>|----downloaded_data
+|    |----&lt;obs_id&gt;
+|    |      |----auxil
+|    |      |----uvot
+|    |      |       |----image
+|    |      |       |       |----sw&lt;obs_id&gt;&lt;filter_name&gt;_&lt;type&gt;.img.gz
+|    
+|----analysis
+|       |----output_files
+|       |      |----&lt;filter_name&gt;
+|       |       |       |----source_output_&lt;obs_id&gt;&lt;filter_name&gt;.fits
+|       |       |       |----light_curve.gif
+|       |       |       |----maghist.fits
+|       |----region_files
+|       |       |----common
+|       |       |       |----src.reg
+|       |       |       |----bg.reg
+|       |       |----&lt;filter_name&gt;
+|       |       |       |----src.reg
+|       |       |       |----bg.reg
+|       |----summed_images
+|       |       |----&lt;filter_name&gt;
+|       |       |       |----sum_img_&lt;obs_id&gt;&lt;filter_name&gt;.img
+|----obs_ids.py
+|----uvotimsum_script.py
+|----uvotmaghist_script.py
+|----uvotsource_script.py
+|----readme.md
+|----obs_id_list
+</code></pre>
+<h3 class="code-line" data-line-start=61 data-line-end=62><a id="COMMAND_SEQUENCE_61"></a>COMMAND SEQUENCE</h3>
+<pre><code class="has-line-data" data-line-start="65" data-line-end="67">$ python3 uvotimsum_script.py 
+</code></pre>
+<blockquote>
+<p class="has-line-data" data-line-start="67" data-line-end="69">this command will prompt to select a filter out of six filters availale<br>
+uvv | um2 | ubb | uw1 | uw2 | uuu</p>
+</blockquote>
+<p class="has-line-data" data-line-start="70" data-line-end="72">sums all the HDUs in downloaded .img files, excluding HDUs with ASPCORR:NONE and stores in analysis/summed_images/&lt;filter_name&gt;<br>
+uvotdetect [chose any of the downloaded image for this, and</p>
+<blockquote>
+<p class="has-line-data" data-line-start="72" data-line-end="74">create source and region files, and store in analysis/region_files/common/src.reg and analysis/region_files/common/bg.reg<br>
+this step is yet to be automated</p>
+</blockquote>
+<pre><code class="has-line-data" data-line-start="75" data-line-end="77">$ python3 uvotsource_script.py
+</code></pre>
+<blockquote>
+<p class="has-line-data" data-line-start="77" data-line-end="79">this command will prompt to select a filter out of six filters availale<br>
+uvv | um2 | ubb | uw1 | uw2 | uuu</p>
+</blockquote>
+<p class="has-line-data" data-line-start="80" data-line-end="82">optional, generate the source details and stores in analysis/output_files/&lt;filter_name&gt;/source_output_&lt;obs_id&gt;&lt;filter_name&gt;.fits, src and bg region must exist for this command to work<br>
+(but in the corrent version , uvotsource_script.py needs to be run prior to running uvotmaghist to )</p>
+<pre><code class="has-line-data" data-line-start="83" data-line-end="85">$ python3 uvotmaghist_script.py
+</code></pre>
+<blockquote>
+<p class="has-line-data" data-line-start="85" data-line-end="87">this command will prompt to select a filter out of six filters availale<br>
+uvv | um2 | ubb | uw1 | uw2 | uuu</p>
+</blockquote>
+<p class="has-line-data" data-line-start="88" data-line-end="90">make sure src and reg files exist<br>
+generate light_curve corresponding to certain filter and stores in analysis/outpt_files/&lt;filter_name&gt;/light_curve.gif,</p>
+</body></html>
